@@ -12,6 +12,8 @@ import (
 	"github.com/diauweb/xmcl/game"
 )
 
+var MATCH_VARIABLE = regexp.MustCompile(`\$\{.*\}`)
+
 func offlineUUID(name string) string {
 	md5s := md5.Sum([]byte(fmt.Sprintf("OfflinePlayer:%s", name)))
 	md5s[6] = md5s[6]&0x0f | 0x30
@@ -76,14 +78,12 @@ func BuildArgs(game *game.Version) []string {
 	_ = gameEnvs
 
 	for _, v := range game.Arguments.Game {
-		var arg = regexp.MustCompile(`\$\{.*\}`)
 		s, ok := v.(string)
 		if !ok {
 			continue
 		}
-		a := arg.ReplaceAllFunc([]byte(s), func(b []byte) []byte {
+		a := MATCH_VARIABLE.ReplaceAllFunc([]byte(s), func(b []byte) []byte {
 			env := b[2 : len(b)-1]
-			// fmt.Printf("%s %s\n", env, gameEnvs[env])
 			return []byte(gameEnvs[string(env)])
 		})
 		args = append(args, string(a))
