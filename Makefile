@@ -16,7 +16,7 @@ version:
 	echo "${GIT_BUILD}"
 
 run:
-	go run -ldflags "${CONSTS}" .
+	go run -ldflags "${CONSTS} -X ${SCOPE}.MODE=DEBUG" .
 
 build:
 	GOOS=windows go build -ldflags "${CONSTS}" .

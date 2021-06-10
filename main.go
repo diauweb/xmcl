@@ -1,9 +1,7 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 
 	"github.com/diauweb/xmcl/config"
 	"github.com/diauweb/xmcl/game"
@@ -15,20 +13,14 @@ import (
 func main() {
 
 	fmt.Printf("%s %s\n", config.PRODUCT_NAME, config.GIT_BUILD)
-	fmt.Println(config.CONFIG_ENDPOINT)
+
+	config.InitConfig()
 
 	fmt.Println("java: detect java")
 	java.DownloadJava()
 
-	dat, err := ioutil.ReadFile("./Managed/versions/1.17-pre1.json")
-	if err != nil {
-		panic(err)
-	}
-	var gameVersion game.Version
-
-	if err1 := json.Unmarshal([]byte(dat), &gameVersion); err1 != nil {
-		panic(err1)
-	}
+	resolveVersion := config.Config.Version.Resolve
+	gameVersion := game.ResolveVersion(resolveVersion)
 
 	fmt.Println("version: download dependencies")
 	task.FetchLibraries(&gameVersion.Libraries)

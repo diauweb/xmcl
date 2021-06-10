@@ -67,9 +67,9 @@ const JDK_PATH = "https://aka.ms/download-jdk/microsoft-jdk-16.0.1.9.1-windows-x
 
 func DownloadJava() {
 
-	// if runtime.GOOS != "windows" {
-	// 	return
-	// }
+	if runtime.GOOS != "windows" {
+		return
+	}
 
 	if _, err := os.Stat("./Managed/java/bin/javaw.exe"); !os.IsNotExist(err) {
 		return
