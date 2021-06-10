@@ -15,4 +15,6 @@
 # vendor/
 
 Managed/
-Cached/
+
+.env
+config.json

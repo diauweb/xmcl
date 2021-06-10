@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 
+	"github.com/diauweb/xmcl/config"
 	"github.com/diauweb/xmcl/game"
 	"github.com/diauweb/xmcl/java"
 	"github.com/diauweb/xmcl/task"
@@ -12,6 +13,10 @@ import (
 )
 
 func main() {
+
+	fmt.Printf("%s %s\n", config.PRODUCT_NAME, config.GIT_BUILD)
+	fmt.Println(config.CONFIG_ENDPOINT)
+
 	fmt.Println("java: detect java")
 	java.DownloadJava()
 
