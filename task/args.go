@@ -59,6 +59,14 @@ func BuildArgs(game *game.Version) []string {
 	}
 
 	args = append(args, "-cp", strings.Join(classpath, string(os.PathListSeparator)))
+	// use g1gc
+	args = append(args,
+		"-XX:+UnlockExperimentalVMOptions",
+		"-XX:+UseG1GC",
+		"-XX:G1NewSizePercent=20",
+		"-XX:G1ReservePercent=20",
+		"-XX:MaxGCPauseMillis=50",
+		"-XX:G1HeapRegionSize=16M")
 	args = append(args, game.Mainclass)
 
 	gameDir, _ := filepath.Abs("./Managed/.minecraft")
@@ -67,12 +75,13 @@ func BuildArgs(game *game.Version) []string {
 	gameEnvs := map[string]string{
 		"auth_player_name":  "megakite",
 		"version_name":      game.ID,
+		"profile_name":      "Minecraft",
 		"game_directory":    gameDir,
 		"assets_root":       assetsDir,
 		"assets_index_name": game.Assets,
 		"auth_uuid":         offlineUUID("megakite"),
 		"version_type":      game.Type,
-		"user_type":         "offline",
+		"user_type":         "mojang",
 	}
 
 	_ = gameEnvs
