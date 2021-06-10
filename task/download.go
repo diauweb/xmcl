@@ -57,7 +57,7 @@ func Download(art game.Artifact, baseDir string, name string, strictValidate boo
 	}
 
 	if err := validator(art, baseDir); err == nil {
-		fmt.Printf("%s [installed]\n", name)
+		// fmt.Printf("%s [installed]\n", name)
 		return
 	}
 

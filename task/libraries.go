@@ -34,7 +34,7 @@ func FetchLibraries(lib *[]game.Library) {
 		progressName := fmt.Sprintf("[%d/%d] %s", i+1, allDepLen, v.Name)
 
 		if !v.IsCompatible() {
-			fmt.Printf("[%d/%d] version: skip dependency %s\n", i+1, allDepLen, v.Name)
+			// fmt.Printf("[%d/%d] version: skip dependency %s\n", i+1, allDepLen, v.Name)
 			continue
 		}
 
@@ -79,7 +79,7 @@ func FetchLibrary(name string, art game.Artifact) {
 	}
 
 	if err := ValidateLibrary(art); err == nil {
-		fmt.Printf("%s [installed]\n", name)
+		// fmt.Printf("%s [installed]\n", name)
 		return
 	}
 
