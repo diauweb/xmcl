@@ -21,5 +21,8 @@ run:
 build:
 	GOOS=windows go build -ldflags "${CONSTS}" .
 
+build2:
+	go build -ldflags "${CONSTS}" .
+
 clean:
 	rm xmcl*.exe

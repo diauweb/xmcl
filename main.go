@@ -7,6 +7,7 @@ import (
 	"github.com/diauweb/xmcl/game"
 	"github.com/diauweb/xmcl/java"
 	"github.com/diauweb/xmcl/task"
+	"github.com/diauweb/xmcl/update"
 	"github.com/diauweb/xmcl/utils"
 )
 
@@ -15,6 +16,7 @@ func main() {
 	fmt.Printf("%s %s\n", config.PRODUCT_NAME, config.GIT_BUILD)
 
 	config.InitConfig()
+	update.Update()
 
 	fmt.Println("java: detect java")
 	java.DownloadJava()
