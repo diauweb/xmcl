@@ -1,6 +1,7 @@
 package game
 
 import (
+	"fmt"
 	"runtime"
 	"time"
 )
@@ -31,8 +32,18 @@ type AssetIndexLink struct {
 	ID        string `json:"id"`
 	Sha1      string `json:"sha1"`
 	Size      int    `json:"size"`
-	Totalsize int    `json:"totalSize"`
+	TotalSize int    `json:"totalSize"`
 	URL       string `json:"url"`
+}
+
+func (o *AssetIndexLink) AsRemote() RemoteManifest {
+	return RemoteManifest{
+		ID:   o.ID,
+		Type: "asset_index",
+		Path: fmt.Sprintf("assets/indexes/%s.json", o.ID),
+		Hash: o.Sha1,
+		URL:  o.URL,
+	}
 }
 
 type Downloads struct {

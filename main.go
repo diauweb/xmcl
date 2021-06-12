@@ -8,7 +8,6 @@ import (
 	"github.com/diauweb/xmcl/java"
 	"github.com/diauweb/xmcl/task"
 	"github.com/diauweb/xmcl/update"
-	"github.com/diauweb/xmcl/utils"
 	"github.com/gookit/color"
 )
 
@@ -27,9 +26,11 @@ func main() {
 
 	fmt.Println("version: download dependencies")
 	task.FetchLibraries(&gameVersion.Libraries)
-	// fmt.Printf("%+v", gameVersion)
+
 	fmt.Println("version: download assets")
-	assets := utils.GetAssetsIndex(&gameVersion)
+	var assets game.AssetsIndex
+	gameVersion.AssetIndex.AsRemote().Unmarshal(&assets)
+
 	task.FetchAssets(&assets)
 
 	// game itself

@@ -14,6 +14,8 @@ type Configs struct {
 	Version    struct {
 		Resolve string `json:"resolve"`
 	} `json:"version"`
+	LaunchEnvs map[string]string `json:"launch_envs"`
+	LaunchArgs []string          `json:"launch_args"`
 }
 
 var Config Configs

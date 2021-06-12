@@ -9,6 +9,8 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/diauweb/xmcl/cli"
+	"github.com/diauweb/xmcl/config"
 	"github.com/diauweb/xmcl/game"
 )
 
@@ -76,18 +78,30 @@ func BuildArgs(game *game.Version) []string {
 	assetsDir, _ := filepath.Abs("./Managed/assets")
 
 	gameEnvs := map[string]string{
-		"auth_player_name":  "megakite",
+		"auth_player_name":  "Player",
 		"version_name":      game.ID,
 		"profile_name":      "Minecraft",
 		"game_directory":    gameDir,
 		"assets_root":       assetsDir,
 		"assets_index_name": game.Assets,
-		"auth_uuid":         offlineUUID("megakite"),
+		"auth_uuid":         offlineUUID("Player"),
 		"version_type":      game.Type,
 		"user_type":         "mojang",
 	}
 
-	_ = gameEnvs
+	for k, v := range config.Config.LaunchEnvs {
+		if v == "$required" {
+			newv := cli.Ask(fmt.Sprintf("Input %s", k))
+			if newv == "" {
+				panic(k + " is null")
+			}
+			gameEnvs[k] = newv
+		} else {
+			gameEnvs[k] = v
+		}
+	}
+
+	gameEnvs["auth_uuid"] = offlineUUID(gameEnvs["auth_player_name"])
 
 	for _, v := range game.Arguments.Game {
 		s, ok := v.(string)
@@ -100,6 +114,8 @@ func BuildArgs(game *game.Version) []string {
 		})
 		args = append(args, string(a))
 	}
+
+	args = append(args, config.Config.LaunchArgs...)
 
 	return args
 }
