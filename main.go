@@ -9,11 +9,12 @@ import (
 	"github.com/diauweb/xmcl/task"
 	"github.com/diauweb/xmcl/update"
 	"github.com/diauweb/xmcl/utils"
+	"github.com/gookit/color"
 )
 
 func main() {
 
-	fmt.Printf("%s %s\n", config.PRODUCT_NAME, config.GIT_BUILD)
+	color.Style{color.Bold}.Printf("%s %s\n", config.PRODUCT_NAME, config.GIT_BUILD)
 
 	config.InitConfig()
 	update.Update()

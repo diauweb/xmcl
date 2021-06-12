@@ -21,5 +21,7 @@ func FetchAssets(assets *game.AssetsIndex) {
 		}})
 	}
 
-	DownloadGroup(tasks, "./Managed/assets/objects")
+	if err := DownloadGroup(tasks, "./Managed/assets/objects"); err != nil {
+		panic(err)
+	}
 }

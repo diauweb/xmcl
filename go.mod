@@ -3,6 +3,7 @@ module github.com/diauweb/xmcl
 go 1.16
 
 require (
+	github.com/gookit/color v1.4.2 // indirect
 	github.com/mattn/go-runewidth v0.0.13 // indirect
 	github.com/schollz/progressbar/v3 v3.8.1 // indirect
 	github.com/staktrace/go-update v0.0.0-20210525161054-fc019945f9a2 // indirect
