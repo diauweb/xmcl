@@ -16,6 +16,7 @@ type Configs struct {
 	} `json:"version"`
 	LaunchEnvs map[string]string `json:"launch_envs"`
 	LaunchArgs []string          `json:"launch_args"`
+	LocalJava  bool              `json:"local_java"`
 }
 
 var Config Configs

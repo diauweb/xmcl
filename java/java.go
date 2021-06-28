@@ -12,6 +12,8 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/diauweb/xmcl/config"
+	"github.com/gookit/color"
 	"github.com/schollz/progressbar/v3"
 )
 
@@ -102,6 +104,11 @@ func DownloadJava() {
 func GetJava() string {
 	switch runtime.GOOS {
 	case "windows":
+		if config.Config.LocalJava {
+			color.LightYellow.Println("config: Assume local java exists")
+			return "javaw.exe"
+		}
+
 		if f, err := filepath.Abs("./Managed/java/bin/javaw.exe"); err == nil {
 			return f
 		} else {

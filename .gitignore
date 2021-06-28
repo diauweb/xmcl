@@ -17,4 +17,4 @@
 Managed/
 
 .env
-config.json
+config*.json
