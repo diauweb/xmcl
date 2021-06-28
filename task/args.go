@@ -63,6 +63,7 @@ func BuildArgs(game *game.Version) []string {
 	args = append(args, "-cp", strings.Join(classpath, string(os.PathListSeparator)))
 	// use g1gc
 	args = append(args,
+		// "--illegal-access=permit",
 		"-XX:+UnlockExperimentalVMOptions",
 		"-XX:+UseG1GC",
 		"-XX:G1NewSizePercent=20",
@@ -71,7 +72,20 @@ func BuildArgs(game *game.Version) []string {
 		"-XX:G1HeapRegionSize=16M",
 		"-XX:-UseAdaptiveSizePolicy",
 		"-XX:-OmitStackTraceInFastThrow",
-		"-Xmn128m")
+		"-Xmn128m",
+	)
+
+	args = append(args,
+		"-Dfml.ignoreInvalidMinecraftCertificates=true",
+		"-Dfml.ignorePatchDiscrepancies=true",
+	)
+
+	// brand infomations
+	args = append(args,
+		"-Dminecraft.launcher.version="+config.GIT_BUILD,
+		"-Dminecraft.launcher.brand="+config.PRODUCT_NAME,
+	)
+
 	args = append(args, game.Mainclass)
 
 	gameDir, _ := filepath.Abs("./Managed/.minecraft")
