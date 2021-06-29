@@ -152,7 +152,7 @@ func BuildArgs(game *game.Version) []string {
 
 	args = append(args, config.Config.LaunchArgs...)
 	if len(game.Tweakers) > 0 {
-		if game.Mainclass != "net.minecraft.launcherwrapper.Launch" {
+		if game.Mainclass != "net.minecraft.launchwrapper.Launch" {
 			fmt.Println("game: tweakers: mainclass is not launchwrapper")
 		}
 		for _, v := range game.Tweakers {
