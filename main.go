@@ -39,6 +39,9 @@ func main() {
 	gameJar.Path = gameJarPath
 	task.Download(gameJar, "./Managed/libraries", fmt.Sprintf("[1/1] Minecraft %s", gameVersion.ID), true)
 
+	fmt.Println("config: install shadows")
+	task.ApplyShadow()
+
 	args := task.BuildArgs(&gameVersion)
 	defer task.CleanNatives(&gameVersion)
 

@@ -8,15 +8,21 @@ import (
 	"os"
 )
 
+type ShadowFile struct {
+	Hash string `json:"hash"`
+	URL  string `json:"url"`
+}
+
 type Configs struct {
 	Latest     string            `json:"latest"`
 	UpdateFile map[string]string `json:"update_file"`
 	Version    struct {
 		Resolve string `json:"resolve"`
 	} `json:"version"`
-	LaunchEnvs map[string]string `json:"launch_envs"`
-	LaunchArgs []string          `json:"launch_args"`
-	LocalJava  bool              `json:"local_java"`
+	LaunchEnvs map[string]string     `json:"launch_envs"`
+	LaunchArgs []string              `json:"launch_args"`
+	LocalJava  bool                  `json:"local_java"`
+	Shadows    map[string]ShadowFile `json:"shadows"`
 }
 
 var Config Configs

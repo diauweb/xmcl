@@ -15,6 +15,7 @@
 # vendor/
 
 Managed/
+shadows/
 
 .env
 config*.json
