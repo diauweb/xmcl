@@ -1,6 +1,7 @@
 package task
 
 import (
+	"archive/zip"
 	"crypto/sha1"
 	"fmt"
 	"io"
@@ -8,9 +9,11 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"sync"
 
 	"github.com/diauweb/xmcl/game"
+	"github.com/gookit/color"
 )
 
 func FetchLibraries(lib *[]game.Library) {
@@ -45,7 +48,9 @@ func FetchLibraries(lib *[]game.Library) {
 			fetch(progressName, art)
 		}
 
-		fetch(progressName, v.Downloads.Artifact)
+		if v.Downloads.Artifact.URL != "" {
+			fetch(progressName, v.Downloads.Artifact)
+		}
 	}
 
 	waiter.Wait()
@@ -79,7 +84,6 @@ func FetchLibrary(name string, art game.Artifact) {
 	}
 
 	if err := ValidateLibrary(art); err == nil {
-		// fmt.Printf("%s [installed]\n", name)
 		return
 	}
 
@@ -87,6 +91,7 @@ func FetchLibrary(name string, art game.Artifact) {
 	resp, err := http.DefaultClient.Do(req)
 
 	if err != nil {
+		color.Red.Printf("error: get artifact %v\n", art)
 		panic(err)
 	}
 
@@ -110,4 +115,83 @@ func FetchLibrary(name string, art game.Artifact) {
 	if err := ValidateLibrary(art); err != nil {
 		panic(err)
 	}
+}
+
+const NATIVES_PATH = "./Managed/.minecraft/natives"
+
+func PrepareNatives(v *game.Version) string {
+	err := os.MkdirAll(NATIVES_PATH, 0755)
+	if err != nil {
+		panic(err)
+	}
+	for _, o := range v.Libraries {
+		ExtractLibraryNatives(NATIVES_PATH, &o)
+	}
+
+	f, err := filepath.Abs(NATIVES_PATH)
+	if err != nil {
+		panic(err)
+	}
+	return f
+}
+
+func CleanNatives(v *game.Version) {
+	os.RemoveAll(NATIVES_PATH)
+}
+
+func ExtractLibraryNatives(path string, lib *game.Library) {
+	if !lib.HasNatives() || !lib.IsCompatible() {
+		return
+	}
+
+	fname := getLibPath(lib.Downloads.Classifiers[lib.Natives[runtime.GOOS]])
+	excludes := lib.Extract.Exclude
+
+	r, err := zip.OpenReader(fname)
+	if err != nil {
+		panic(err)
+	}
+	defer r.Close()
+
+file:
+	for _, f := range r.File {
+		rc, err := f.Open()
+		if err != nil {
+			panic(err)
+		}
+		defer rc.Close()
+
+		for _, v := range excludes {
+			if strings.HasPrefix(f.Name, v) {
+				continue file
+			}
+		}
+		fpath := filepath.Join(path, f.Name)
+
+		if f.FileInfo().IsDir() {
+			_ = os.MkdirAll(fpath, f.Mode())
+		} else {
+			var fdir string
+			if lastIndex := strings.LastIndex(fpath, string(os.PathSeparator)); lastIndex > -1 {
+				fdir = fpath[:lastIndex]
+			}
+
+			err = os.MkdirAll(fdir, f.Mode())
+			if err != nil {
+				panic(err)
+			}
+			f, err := os.OpenFile(
+				fpath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
+			if err != nil {
+				panic(err)
+			}
+			defer f.Close()
+
+			_, err = io.Copy(f, rc)
+			if err != nil {
+				panic(err)
+			}
+		}
+	}
+
 }

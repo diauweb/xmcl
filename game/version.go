@@ -21,6 +21,8 @@ type Version struct {
 	Releasetime            time.Time      `json:"releaseTime"`
 	Time                   time.Time      `json:"time"`
 	Type                   string         `json:"type"`
+	MinecraftArguments     string         `json:"minecraftArguments"`
+	Tweakers               []string
 }
 
 type Arguments struct {
@@ -92,6 +94,9 @@ type Library struct {
 	} `json:"downloads"`
 	Natives map[string]string `json:"natives,omitempty"`
 	Rules   []LibraryRule     `json:"rules,omitempty"`
+	Extract struct {
+		Exclude []string `json:"exclude"`
+	} `json:"extract,omitempty"`
 }
 
 func (lib *Library) IsCompatible() bool {
@@ -110,4 +115,9 @@ func (lib *Library) IsCompatible() bool {
 	}
 
 	return compatible
+}
+
+func (lib *Library) HasNatives() bool {
+	_, ok := lib.Natives[runtime.GOOS]
+	return ok
 }

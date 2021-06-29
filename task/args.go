@@ -60,7 +60,7 @@ func BuildArgs(game *game.Version) []string {
 		}
 	}
 
-	args = append(args, "-cp", strings.Join(classpath, string(os.PathListSeparator)))
+	// preset jvm args
 	// use g1gc
 	args = append(args,
 		// "--illegal-access=permit",
@@ -80,16 +80,9 @@ func BuildArgs(game *game.Version) []string {
 		"-Dfml.ignorePatchDiscrepancies=true",
 	)
 
-	// brand infomations
-	args = append(args,
-		"-Dminecraft.launcher.version="+config.GIT_BUILD,
-		"-Dminecraft.launcher.brand="+config.PRODUCT_NAME,
-	)
-
-	args = append(args, game.Mainclass)
-
 	gameDir, _ := filepath.Abs("./Managed/.minecraft")
 	assetsDir, _ := filepath.Abs("./Managed/assets")
+	natives := PrepareNatives(game)
 
 	gameEnvs := map[string]string{
 		"auth_player_name":  "Player",
@@ -101,6 +94,10 @@ func BuildArgs(game *game.Version) []string {
 		"auth_uuid":         offlineUUID("Player"),
 		"version_type":      game.Type,
 		"user_type":         "mojang",
+		"launcher_name":     config.PRODUCT_NAME,
+		"launcher_version":  config.GIT_BUILD,
+		"natives_directory": natives,
+		"classpath":         strings.Join(classpath, string(os.PathListSeparator)),
 	}
 
 	for k, v := range config.Config.LaunchEnvs {
@@ -114,22 +111,63 @@ func BuildArgs(game *game.Version) []string {
 			gameEnvs[k] = v
 		}
 	}
-
 	gameEnvs["auth_uuid"] = offlineUUID(gameEnvs["auth_player_name"])
+
+	// legacy format convertion
+	if game.MinecraftArguments != "" {
+		sp := strings.Split(game.MinecraftArguments, " ")
+		y := make([]interface{}, len(sp))
+		for i, v := range sp {
+			y[i] = v
+		}
+
+		game.Arguments.Game = y
+		game.Arguments.JVM = []interface{}{
+			"-Djava.library.path=${natives_directory}",
+			"-Dminecraft.launcher.brand=${launcher_name}",
+			"-Dminecraft.launcher.version=${launcher_version}",
+			"-cp",
+			"${classpath}",
+		}
+	}
+
+	// todo: JVM and Game rule-specified arguments
+	for _, v := range game.Arguments.JVM {
+		s, ok := v.(string)
+		if !ok {
+			continue // todo
+		}
+		args = append(args, s)
+	}
+
+	args = append(args, game.Mainclass)
 
 	for _, v := range game.Arguments.Game {
 		s, ok := v.(string)
 		if !ok {
-			continue
+			continue // todo
 		}
-		a := MATCH_VARIABLE.ReplaceAllFunc([]byte(s), func(b []byte) []byte {
-			env := b[2 : len(b)-1]
-			return []byte(gameEnvs[string(env)])
-		})
-		args = append(args, string(a))
+		args = append(args, s)
 	}
 
 	args = append(args, config.Config.LaunchArgs...)
+	if len(game.Tweakers) > 0 {
+		if game.Mainclass != "net.minecraft.launcherwrapper.Launch" {
+			fmt.Println("game: tweakers: mainclass is not launchwrapper")
+		}
+		for _, v := range game.Tweakers {
+			args = append(args, "--tweakClass", v)
+		}
+	}
 
+	for i, v := range args {
+		a := MATCH_VARIABLE.ReplaceAllFunc([]byte(v), func(b []byte) []byte {
+			env := b[2 : len(b)-1]
+			return []byte(gameEnvs[string(env)])
+		})
+		args[i] = string(a)
+	}
+
+	// fmt.Printf(">>> %v\n", args)
 	return args
 }

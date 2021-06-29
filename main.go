@@ -40,5 +40,7 @@ func main() {
 	task.Download(gameJar, "./Managed/libraries", fmt.Sprintf("[1/1] Minecraft %s", gameVersion.ID), true)
 
 	args := task.BuildArgs(&gameVersion)
+	defer task.CleanNatives(&gameVersion)
+
 	java.RunJava(args, "./Managed/.minecraft")
 }
