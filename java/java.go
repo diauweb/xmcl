@@ -73,6 +73,11 @@ func DownloadJava() {
 		return
 	}
 
+	if config.Config.LocalJava {
+		color.LightYellow.Println("config: Assume local java exists")
+		return
+	}
+
 	if _, err := os.Stat("./Managed/java/bin/javaw.exe"); !os.IsNotExist(err) {
 		return
 	}
@@ -105,7 +110,6 @@ func GetJava() string {
 	switch runtime.GOOS {
 	case "windows":
 		if config.Config.LocalJava {
-			color.LightYellow.Println("config: Assume local java exists")
 			return "javaw.exe"
 		}
 
