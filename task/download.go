@@ -17,10 +17,11 @@ func DownloadGroup(arts []game.RemoteResource, maxRoutine int) error {
 	guard := make(chan struct{}, maxRoutine)
 	var waiter sync.WaitGroup
 
-	fetch := func(name string, art game.RemoteResource) {
+	fetch := func(progressName string, art game.RemoteResource) {
 		guard <- struct{}{}
 		waiter.Add(1)
 		go func() {
+			fmt.Println(progressName)
 			art.Download()
 			<-guard
 			waiter.Done()
