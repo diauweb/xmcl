@@ -10,7 +10,7 @@ import (
 	"path/filepath"
 )
 
-type RemoteManifest struct {
+type RemoteResource struct {
 	ID   string
 	Type string
 	Path string
@@ -18,10 +18,10 @@ type RemoteManifest struct {
 	Hash string
 }
 
-func (r RemoteManifest) realpath() string {
+func (r RemoteResource) realpath() string {
 	return fmt.Sprintf("./Managed/%s", r.Path)
 }
-func (r RemoteManifest) Validate() bool {
+func (r RemoteResource) Validate() bool {
 	if r.Hash == "" {
 		_, err := os.Stat(r.realpath())
 		return !os.IsNotExist(err)
@@ -40,7 +40,7 @@ func (r RemoteManifest) Validate() bool {
 	return fmt.Sprintf("%x", hash) == r.Hash
 }
 
-func (r RemoteManifest) ForceDownload() {
+func (r RemoteResource) ForceDownload() {
 	path := r.realpath()
 
 	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
@@ -71,7 +71,7 @@ func (r RemoteManifest) ForceDownload() {
 	}
 }
 
-func (r RemoteManifest) Download() {
+func (r RemoteResource) Download() {
 
 	if r.Validate() {
 		return
@@ -80,7 +80,7 @@ func (r RemoteManifest) Download() {
 	r.ForceDownload()
 }
 
-func (r RemoteManifest) Unmarshal(o interface{}) {
+func (r RemoteResource) Unmarshal(o interface{}) {
 	r.Download()
 
 	f, err := os.ReadFile(r.realpath())

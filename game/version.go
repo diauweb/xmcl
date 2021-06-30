@@ -38,8 +38,8 @@ type AssetIndexLink struct {
 	URL       string `json:"url"`
 }
 
-func (o *AssetIndexLink) AsRemote() RemoteManifest {
-	return RemoteManifest{
+func (o *AssetIndexLink) AsRemote() RemoteResource {
+	return RemoteResource{
 		ID:   o.ID,
 		Type: "asset_index",
 		Path: fmt.Sprintf("assets/indexes/%s.json", o.ID),

@@ -8,8 +8,9 @@ import (
 )
 
 func ApplyShadow() {
+	tasks := make([]game.RemoteResource, 0, len(config.Config.Shadows))
 	for k, v := range config.Config.Shadows {
-		remote := game.RemoteManifest{
+		remote := game.RemoteResource{
 			ID:   k,
 			Type: "game_shadow",
 			Path: fmt.Sprintf("./.minecraft/%s", k),
@@ -17,9 +18,11 @@ func ApplyShadow() {
 			Hash: v.Hash,
 		}
 
-		if !remote.Validate() {
-			fmt.Println(k)
-			remote.ForceDownload()
-		}
+		tasks = append(tasks, remote)
+	}
+
+	err := DownloadGroup(tasks, 3)
+	if err != nil {
+		panic(err)
 	}
 }

@@ -24,11 +24,11 @@ type VersionManifest struct {
 	Versions []VersionMeta `json:"versions"`
 }
 
-func (v VersionMeta) AsRemote() RemoteManifest {
+func (v VersionMeta) AsRemote() RemoteResource {
 	s := strings.Split(v.URL, "/")
 	hash := s[len(s)-2]
 
-	return RemoteManifest{
+	return RemoteResource{
 		ID:   v.ID,
 		Type: "version",
 		URL:  v.URL,

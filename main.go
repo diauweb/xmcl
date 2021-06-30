@@ -34,10 +34,15 @@ func main() {
 	task.FetchAssets(&assets)
 
 	// game itself
-	gameJarPath := fmt.Sprintf("net/minecraft/%[1]s/%[1]s.jar", gameVersion.ID)
-	gameJar := gameVersion.Downloads.Client
-	gameJar.Path = gameJarPath
-	task.Download(gameJar, "./Managed/libraries", fmt.Sprintf("[1/1] Minecraft %s", gameVersion.ID), true)
+	gameJar := game.RemoteResource{
+		ID:   gameVersion.ID,
+		Type: "game",
+		URL:  gameVersion.Downloads.Client.URL,
+		Path: fmt.Sprintf("libraries/net/minecraft/%[1]s/%[1]s.jar", gameVersion.ID),
+		Hash: gameVersion.Downloads.Client.Sha1,
+	}
+	fmt.Printf("[1/1] Minecraft %s\n", gameVersion.ID)
+	gameJar.Download()
 
 	fmt.Println("config: install shadows")
 	task.ApplyShadow()

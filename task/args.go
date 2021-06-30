@@ -75,6 +75,8 @@ func BuildArgs(game *game.Version) []string {
 		"-Xmn128m",
 	)
 
+	args = append(args, "-Xmx${java_max_mem}")
+
 	args = append(args,
 		"-Dfml.ignoreInvalidMinecraftCertificates=true",
 		"-Dfml.ignorePatchDiscrepancies=true",
@@ -98,6 +100,7 @@ func BuildArgs(game *game.Version) []string {
 		"launcher_version":  config.GIT_BUILD,
 		"natives_directory": natives,
 		"classpath":         strings.Join(classpath, string(os.PathListSeparator)),
+		"_java_max_mem":     "1536m",
 	}
 
 	for k, v := range config.Config.LaunchEnvs {

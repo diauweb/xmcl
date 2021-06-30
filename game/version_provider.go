@@ -16,7 +16,7 @@ func (g MojangGameVersionProvider) GetSchema() string {
 	return "mojang"
 }
 
-var remoteGameManifest = RemoteManifest{
+var remoteGameManifest = RemoteResource{
 	ID:   "version_manifest",
 	Type: "version_manifest",
 	URL:  VERSION_MANIFEST_URL,
@@ -64,7 +64,7 @@ type multimcGameVersion struct {
 }
 
 func (g ForgeGameVersionProvider) Resolve(version string) (Version, error) {
-	var remoteForgeManifest = RemoteManifest{
+	var remoteForgeManifest = RemoteResource{
 		ID:   version,
 		Type: "version",
 		Path: fmt.Sprintf("versions/forge-%s.mmc.json", version),
