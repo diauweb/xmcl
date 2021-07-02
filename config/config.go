@@ -19,10 +19,10 @@ type Configs struct {
 	Version    struct {
 		Resolve string `json:"resolve"`
 	} `json:"version"`
-	LaunchEnvs map[string]string     `json:"launch_envs"`
-	LaunchArgs []string              `json:"launch_args"`
-	LocalJava  bool                  `json:"local_java"`
-	Shadows    map[string]ShadowFile `json:"shadows"`
+	LaunchEnvs     map[string]string `json:"launch_envs"`
+	LaunchArgs     []string          `json:"launch_args"`
+	LocalJava      bool              `json:"local_java"`
+	ShadowManifest string            `json:"shadow_manifest"`
 }
 
 var Config Configs

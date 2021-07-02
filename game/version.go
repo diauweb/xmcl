@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"runtime"
 	"time"
+
+	"github.com/diauweb/xmcl/remote"
 )
 
 type Version struct {
@@ -38,8 +40,8 @@ type AssetIndexLink struct {
 	URL       string `json:"url"`
 }
 
-func (o *AssetIndexLink) AsRemote() RemoteResource {
-	return RemoteResource{
+func (o *AssetIndexLink) AsRemote() remote.RemoteResource {
+	return remote.RemoteResource{
 		ID:   o.ID,
 		Type: "asset_index",
 		Path: fmt.Sprintf("assets/indexes/%s.json", o.ID),

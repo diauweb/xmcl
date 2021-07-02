@@ -2,10 +2,12 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/diauweb/xmcl/config"
 	"github.com/diauweb/xmcl/game"
 	"github.com/diauweb/xmcl/java"
+	"github.com/diauweb/xmcl/remote"
 	"github.com/diauweb/xmcl/task"
 	"github.com/diauweb/xmcl/update"
 	"github.com/gookit/color"
@@ -14,6 +16,14 @@ import (
 func main() {
 
 	color.Style{color.Bold}.Printf("%s %s\n", config.PRODUCT_NAME, config.GIT_BUILD)
+
+	if err := os.MkdirAll("./Managed/cache", 0755); err != nil {
+		panic(err)
+	}
+
+	if err := os.MkdirAll("./Managed/.minecraft", 0755); err != nil {
+		panic(err)
+	}
 
 	config.InitConfig()
 	update.Update()
@@ -34,7 +44,7 @@ func main() {
 	task.FetchAssets(&assets)
 
 	// game itself
-	gameJar := game.RemoteResource{
+	gameJar := remote.RemoteResource{
 		ID:   gameVersion.ID,
 		Type: "game",
 		URL:  gameVersion.Downloads.Client.URL,
@@ -49,6 +59,7 @@ func main() {
 
 	args := task.BuildArgs(&gameVersion)
 	defer task.CleanNatives(&gameVersion)
+	defer os.RemoveAll("./Managed/cache")
 
 	java.RunJava(args, "./Managed/.minecraft")
 }

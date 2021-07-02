@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/diauweb/xmcl/game"
+	"github.com/diauweb/xmcl/remote"
 )
 
-func DownloadGroup(arts []game.RemoteResource, maxRoutine int) error {
+func DownloadGroup(arts []remote.RemoteResource, maxRoutine int) error {
 	allDepLen := len(arts)
 
 	if maxRoutine < 1 {
@@ -17,12 +17,14 @@ func DownloadGroup(arts []game.RemoteResource, maxRoutine int) error {
 	guard := make(chan struct{}, maxRoutine)
 	var waiter sync.WaitGroup
 
-	fetch := func(progressName string, art game.RemoteResource) {
+	fetch := func(progressName string, art remote.RemoteResource) {
 		guard <- struct{}{}
 		waiter.Add(1)
 		go func() {
-			fmt.Println(progressName)
-			art.Download()
+			if !art.Validate() {
+				fmt.Println(progressName)
+				art.ForceDownload()
+			}
 			<-guard
 			waiter.Done()
 		}()

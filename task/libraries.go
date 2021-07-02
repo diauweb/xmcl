@@ -146,14 +146,24 @@ func ExtractLibraryNatives(path string, lib *game.Library) {
 
 	fname := getLibPath(lib.Downloads.Classifiers[lib.Natives[runtime.GOOS]])
 	excludes := lib.Extract.Exclude
+	ExtractFiles(fname, path, func(f *zip.File) bool {
+		for _, v := range excludes {
+			if strings.HasPrefix(f.Name, v) {
+				return true
+			}
+		}
+		return false
+	})
+}
 
-	r, err := zip.OpenReader(fname)
+func ExtractFiles(zipfile string, path string, excludeFunc func(*zip.File) bool) {
+
+	r, err := zip.OpenReader(zipfile)
 	if err != nil {
 		panic(err)
 	}
 	defer r.Close()
 
-file:
 	for _, f := range r.File {
 		rc, err := f.Open()
 		if err != nil {
@@ -161,11 +171,10 @@ file:
 		}
 		defer rc.Close()
 
-		for _, v := range excludes {
-			if strings.HasPrefix(f.Name, v) {
-				continue file
-			}
+		if excludeFunc(f) {
+			continue
 		}
+
 		fpath := filepath.Join(path, f.Name)
 
 		if f.FileInfo().IsDir() {

@@ -3,6 +3,8 @@ package game
 import (
 	"fmt"
 	"strings"
+
+	"github.com/diauweb/xmcl/remote"
 )
 
 type GameVersionProvider interface {
@@ -16,7 +18,7 @@ func (g MojangGameVersionProvider) GetSchema() string {
 	return "mojang"
 }
 
-var remoteGameManifest = RemoteResource{
+var remoteGameManifest = remote.RemoteResource{
 	ID:   "version_manifest",
 	Type: "version_manifest",
 	URL:  VERSION_MANIFEST_URL,
@@ -64,7 +66,7 @@ type multimcGameVersion struct {
 }
 
 func (g ForgeGameVersionProvider) Resolve(version string) (Version, error) {
-	var remoteForgeManifest = RemoteResource{
+	var remoteForgeManifest = remote.RemoteResource{
 		ID:   version,
 		Type: "version",
 		Path: fmt.Sprintf("versions/forge-%s.mmc.json", version),

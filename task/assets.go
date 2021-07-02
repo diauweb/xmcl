@@ -4,17 +4,16 @@ import (
 	"fmt"
 
 	"github.com/diauweb/xmcl/game"
+	"github.com/diauweb/xmcl/remote"
 )
 
 const OBJECT = "https://resources.download.minecraft.net/%s"
 
 func FetchAssets(assets *game.AssetsIndex) {
-	// tasks := make([]Task, 0, len(assets.Objects))
-	tasks := make([]game.RemoteResource, 0, len(assets.Objects))
+	tasks := make([]remote.RemoteResource, 0, len(assets.Objects))
 	for k, v := range assets.Objects {
 		path := fmt.Sprintf("%s/%s", v.Hash[:2], v.Hash)
-		// fmt.Printf("%s %v\n", k, path)
-		rm := game.RemoteResource{
+		rm := remote.RemoteResource{
 			ID:   k,
 			Type: "assets_object",
 			Path: fmt.Sprintf("assets/objects/%s/%s", v.Hash[:2], v.Hash),

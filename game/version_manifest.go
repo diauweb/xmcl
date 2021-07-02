@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 	"time"
+
+	"github.com/diauweb/xmcl/remote"
 )
 
 const VERSION_MANIFEST_URL = "https://launchermeta.mojang.com/mc/game/version_manifest.json"
@@ -24,11 +26,11 @@ type VersionManifest struct {
 	Versions []VersionMeta `json:"versions"`
 }
 
-func (v VersionMeta) AsRemote() RemoteResource {
+func (v VersionMeta) AsRemote() remote.RemoteResource {
 	s := strings.Split(v.URL, "/")
 	hash := s[len(s)-2]
 
-	return RemoteResource{
+	return remote.RemoteResource{
 		ID:   v.ID,
 		Type: "version",
 		URL:  v.URL,

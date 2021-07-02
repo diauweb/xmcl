@@ -1,4 +1,4 @@
-package game
+package remote
 
 import (
 	"crypto/sha1"
@@ -41,10 +41,20 @@ func (r RemoteResource) Validate() bool {
 }
 
 func (r RemoteResource) ForceDownload() {
+	r.ForceDownloadThreads(1)
+}
+
+func (r RemoteResource) ForceDownloadThreads(thread int) {
 	path := r.realpath()
 
 	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
 		panic(err)
+	}
+
+	if thread > 1 {
+		if err := r.downloadmulti(int64(thread)); err != nil {
+			panic(err)
+		}
 	}
 
 	req, _ := http.NewRequest("GET", r.URL, nil)
@@ -69,6 +79,15 @@ func (r RemoteResource) ForceDownload() {
 	if !r.Validate() {
 		panic("r: validation failure")
 	}
+}
+
+func (r RemoteResource) DownloadThreads(threads int) {
+
+	if r.Validate() {
+		return
+	}
+
+	r.ForceDownloadThreads(threads)
 }
 
 func (r RemoteResource) Download() {

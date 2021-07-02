@@ -19,3 +19,5 @@ shadows/
 
 .env
 config*.json
+shadow_manifest*.json
+bundle*.zip
