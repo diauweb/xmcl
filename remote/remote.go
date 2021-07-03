@@ -21,6 +21,11 @@ type RemoteResource struct {
 func (r RemoteResource) realpath() string {
 	return fmt.Sprintf("./Managed/%s", r.Path)
 }
+
+func (r RemoteResource) Open() (*os.File, error) {
+	return os.Open(r.realpath())
+}
+
 func (r RemoteResource) Validate() bool {
 	if r.Hash == "" {
 		_, err := os.Stat(r.realpath())
