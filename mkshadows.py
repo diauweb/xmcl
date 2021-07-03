@@ -25,6 +25,8 @@ def files():
     for folder, _, files in os.walk("./shadows"):
         for i in files:
             key = f"{folder.replace('./shadows/', '')}/{i}"
+            key = i if folder == './shadows' else key
+
             path = f"{folder}/{i}"
 
             ret.append({

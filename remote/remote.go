@@ -27,13 +27,18 @@ func (r RemoteResource) Validate() bool {
 		return !os.IsNotExist(err)
 	}
 
-	f, err := os.ReadFile(r.realpath())
+	f, err := os.Open(r.realpath())
 	if err != nil {
 		return false
 	}
+	defer f.Close()
 
-	hash := sha1.Sum(f)
-	// debug
+	h := sha1.New()
+	if _, err := io.Copy(h, f); err != nil {
+		panic(err)
+	}
+
+	hash := h.Sum(nil)
 	if fmt.Sprintf("%x", hash) != r.Hash {
 		fmt.Printf("remote_manifest: invalidate: %v found %x\n", r, hash)
 	}
@@ -63,8 +68,11 @@ func (r RemoteResource) ForceDownloadThreads(thread int) {
 	if err != nil {
 		panic(err)
 	}
-
 	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		panic(fmt.Errorf("request %s return status code %d", r.URL, resp.StatusCode))
+	}
 
 	f, err1 := os.OpenFile(path, os.O_CREATE|os.O_WRONLY, 0755)
 	if err1 != nil {
