@@ -45,8 +45,9 @@ def main():
     print("mkshadows 0.2")
     
     ret = {
-        "type": "bundled",
-        "bundle": f"{os.environ['ENDPOINT']}{bundle()}",
+        "type": "files",
+        "bundle": None,
+        # "bundle": f"{os.environ['ENDPOINT']}{bundle()}",
         "sanity": [
             {
                 "path": "mods/",

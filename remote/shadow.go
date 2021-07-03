@@ -21,7 +21,7 @@ func (f ShadowFile) AsRemote() RemoteResource {
 		ID:   f.Path,
 		Type: "shadow_file",
 		URL:  f.URL,
-		Path: fmt.Sprintf("./minecraft/%s", f.Path),
+		Path: fmt.Sprintf("./.minecraft/%s", f.Path),
 		Hash: f.Hash,
 	}
 }
